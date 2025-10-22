@@ -1,110 +1,217 @@
-# AURA 999+ Betting Platform Backend
+# AURA 999+ Betting Platform - Complete Setup Guide
 
-A complete Node.js backend for a real-time betting web application with Google OAuth, phone OTP authentication, wallet management, and live gaming features.
+A complete full-stack betting web application with real-time chess gaming, authentication, wallet management, and customer support.
 
-## Features
+## 🚀 Quick Start Guide
 
-- **Authentication**: Google OAuth2 and Phone OTP login
-- **User Management**: Profile management with wallet balance tracking
-- **Wallet System**: Deposit and withdrawal functionality
-- **Gaming Platform**: Real-time multiplayer betting games
-- **Transaction Logs**: Complete audit trail for all financial operations
-- **Admin Panel**: Platform management and statistics
-- **Real-time Communication**: Socket.io for live gameplay
-- **Security**: JWT authentication, rate limiting, and input validation
+### Prerequisites
+- **Node.js** (v18 or higher)
+- **MongoDB** (local or cloud)
+- **Google Cloud Console** account (for OAuth)
+- **Twilio** account (for SMS OTP)
 
-## Tech Stack
+### 1. Backend Setup
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB with Mongoose
-- **Real-time**: Socket.io
-- **Authentication**: Passport.js (Google OAuth), JWT, Twilio (OTP)
-- **Security**: Helmet, CORS, Rate Limiting
+```bash
+# Navigate to server directory
+cd "c:\\Masai Full Time\\Project\\Group Project\\GAMING\\server"
 
-## Installation
+# Install dependencies
+npm install
 
-1. **Clone and navigate to the project**:
-   ```bash
-   cd "c:\\Masai Full Time\\Project\\Group Project\\GAMING\\server"
-   ```
+# Start MongoDB (if local)
+mongod
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+# Create admin user
+npm run create-admin
 
-3. **Set up environment variables**:
-   Copy `.env` file and update with your credentials:
-   ```bash
-   # Database
-   MONGODB_URI=mongodb://localhost:27017/aura999
-   
-   # JWT
-   JWT_SECRET=your_super_secret_jwt_key
-   JWT_EXPIRE=7d
-   
-   # Google OAuth
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
-   
-   # Twilio
-   TWILIO_ACCOUNT_SID=your_twilio_account_sid
-   TWILIO_AUTH_TOKEN=your_twilio_auth_token
-   TWILIO_PHONE_NUMBER=your_twilio_phone_number
-   
-   # App Settings
-   CLIENT_URL=http://localhost:5173
-   PORT=3000
-   NODE_ENV=development
-   ```
+# Start server
+npm run dev
+```
 
-4. **Start MongoDB** (make sure MongoDB is running on your system)
+### 2. Frontend Setup
 
-5. **Run the application**:
-   ```bash
-   # Development mode
-   npm run dev
-   
-   # Production mode
-   npm start
-   ```
+```bash
+# Navigate to client directory
+cd "c:\\Masai Full Time\\Project\\Group Project\\GAMING\\client"
 
-## Project Structure
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+## 🔧 Required Environment Variables
+
+### Server (.env file)
+```env
+# REQUIRED - Update these values
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/aura999
+JWT_SECRET=your_super_secret_jwt_key_minimum_32_characters
+JWT_EXPIRE=7d
+
+# Google OAuth - GET FROM: https://console.cloud.google.com/
+GOOGLE_CLIENT_ID=your_google_client_id_from_console
+GOOGLE_CLIENT_SECRET=your_google_client_secret_from_console
+
+# Twilio SMS - GET FROM: https://console.twilio.com/
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# App Settings
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+```
+
+## 📋 Setup Checklist
+
+### ✅ Required Services Setup
+
+#### 1. MongoDB Setup
+- [ ] **Local MongoDB**: Install and start `mongod` service
+- [ ] **OR MongoDB Atlas**: Create cluster at https://cloud.mongodb.com/
+- [ ] Update `MONGODB_URI` in .env file
+
+#### 2. Google OAuth Setup
+- [ ] Go to [Google Cloud Console](https://console.cloud.google.com/)
+- [ ] Create new project or select existing
+- [ ] Enable "Google+ API" or "Google Identity"
+- [ ] Create OAuth 2.0 credentials
+- [ ] Add authorized redirect URI: `http://localhost:3000/auth/google/callback`
+- [ ] Copy Client ID and Secret to .env file
+
+#### 3. Twilio SMS Setup
+- [ ] Sign up at [Twilio](https://www.twilio.com/)
+- [ ] Verify your phone number
+- [ ] Get Account SID and Auth Token from dashboard
+- [ ] Purchase a phone number for SMS
+- [ ] Update Twilio credentials in .env file
+
+#### 4. JWT Secret
+- [ ] Generate strong JWT secret (minimum 32 characters)
+- [ ] Use: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+
+### 🎯 Application Features
+
+#### Authentication System
+- **Phone OTP Login**: SMS-based verification
+- **Google OAuth**: One-click social login
+- **JWT Tokens**: Secure session management
+- **User Profiles**: Name, phone, wallet balance tracking
+
+#### Chess Gaming Platform
+- **Real-time Multiplayer**: Socket.io powered
+- **Entry Fee System**: ₹100 to ₹50,000 betting options
+- **Winner Takes 80%**: 20% platform commission
+- **Room Codes**: Private game invitations
+- **Proper Chess Rules**: Valid move validation
+
+#### Wallet System
+- **Deposits**: Add money to wallet
+- **Withdrawals**: Cash out winnings
+- **Transaction History**: Complete audit trail
+- **Balance Validation**: Prevent insufficient fund bets
+
+#### Customer Support
+- **Live Chat Widget**: Real-time support
+- **Quick Issues**: Pre-defined problem categories
+- **Contact Fallback**: Phone number for complex issues
+- **Auto-responses**: Context-aware replies
+
+### 🌐 Application URLs
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3000
+- **API Documentation**: http://localhost:3000 (shows available endpoints)
+- **Health Check**: http://localhost:3000/health
+
+### 🎮 How to Play
+
+1. **Register/Login**: Use phone OTP or Google OAuth
+2. **Add Funds**: Deposit money to wallet (mock system)
+3. **Start Playing**: Click "Start Playing" button
+4. **Select Entry Fee**: Choose from ₹100 to ₹50,000
+5. **Wait for Opponent**: System matches players automatically
+6. **Play Chess**: Real-time multiplayer chess game
+7. **Win Prize**: Winner gets 80% of total pot
+
+### 🔍 Troubleshooting
+
+#### Common Issues:
+
+1. **MongoDB Connection Error**
+   - Ensure MongoDB is running: `mongod`
+   - Check connection string in .env
+
+2. **Google OAuth Not Working**
+   - Verify redirect URI in Google Console
+   - Check Client ID and Secret
+
+3. **SMS OTP Not Sending**
+   - Verify Twilio credentials
+   - Check phone number format (+country code)
+   - Ensure Twilio account has credits
+
+4. **Socket.io Connection Issues**
+   - Check if both frontend and backend are running
+   - Verify CORS settings
+
+5. **JWT Token Errors**
+   - Ensure JWT_SECRET is set and long enough
+   - Check token expiration settings
+
+### 📱 Mobile Responsive
+- All pages work on mobile devices
+- Touch-friendly chess interface
+- Responsive navigation and forms
+
+### 🔒 Security Features
+- Rate limiting (100 requests/15 minutes)
+- CORS protection
+- Helmet security headers
+- Input validation and sanitization
+- JWT-based authentication
+- Phone number verification
+
+### 🎨 Design Theme
+- **Colors**: Black (#000), Yellow (#FFD700), White (#FFF)
+- **3D Effects**: Hover animations and depth
+- **Modern UI**: Glass morphism and gradients
+- **Consistent Branding**: Across all pages
+
+## 📁 Project Structure
 
 ```
-server/
-├── config/
-│   ├── database.js      # MongoDB connection
-│   ├── passport.js      # Passport configuration
-│   └── socket.js        # Socket.io setup
-├── controllers/
-│   ├── adminController.js
-│   ├── authController.js
-│   ├── betController.js
-│   ├── gameController.js
-│   ├── userController.js
-│   └── walletController.js
-├── middleware/
-│   └── auth.js          # Authentication middleware
-├── models/
-│   ├── Game.js
-│   ├── OTP.js
-│   ├── Transaction.js
-│   └── User.js
-├── routes/
-│   ├── admin.js
-│   ├── auth.js
-│   ├── bets.js
-│   ├── games.js
-│   ├── users.js
-│   └── wallet.js
-├── utils/
-│   ├── jwt.js           # JWT utilities
-│   └── twilio.js        # SMS service
-├── .env                 # Environment variables
-├── server.js            # Main application file
-└── package.json
+GAMING/
+├── server/                 # Backend (Node.js + Express)
+│   ├── config/
+│   │   ├── database.js     # MongoDB connection
+│   │   ├── passport.js     # Google OAuth config
+│   │   └── socket.js       # Real-time chess logic
+│   ├── controllers/        # Business logic
+│   ├── models/            # Database schemas
+│   ├── routes/            # API endpoints
+│   ├── middleware/        # Auth & validation
+│   ├── utils/             # JWT & Twilio services
+│   ├── scripts/           # Admin user creation
+│   ├── .env              # Environment variables
+│   └── server.js         # Main server file
+│
+├── client/                # Frontend (React + Vite)
+│   ├── src/
+│   │   ├── components/    # Reusable components
+│   │   │   ├── ChessGame.jsx      # Real-time chess
+│   │   │   └── CustomerChat.jsx   # Support chat
+│   │   ├── pages/         # Main pages
+│   │   │   ├── GamePage.jsx       # Game selection
+│   │   │   ├── LoginPage.jsx      # Authentication
+│   │   │   └── SignupPage.jsx     # Registration
+│   │   ├── assets/        # Images and static files
+│   │   └── App.jsx        # Main app component
+│   └── package.json
 ```
 
 ## API Endpoints
