@@ -1,0 +1,169 @@
+.game-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 2rem;
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.game-header h1 {
+  font-size: 3rem;
+  color: #FFD700;
+  margin-bottom: 1rem;
+}
+
+.balance {
+  font-size: 1.5rem;
+  background: #1a1a1a;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  display: inline-block;
+  border: 2px solid #FFD700;
+}
+
+.waiting-screen {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #333;
+  border-top: 4px solid #FFD700;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.waiting-screen h2 {
+  color: #FFD700;
+  margin-bottom: 1rem;
+}
+
+.waiting-screen p {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.entry-selection {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.entry-selection h2 {
+  font-size: 2.5rem;
+  color: #FFD700;
+  margin-bottom: 3rem;
+}
+
+.entry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.entry-btn {
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  border: 2px solid #333;
+  border-radius: 15px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.entry-btn:hover:not(.disabled) {
+  border-color: #FFD700;
+  transform: translateY(-5px) rotateX(10deg);
+  box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
+}
+
+.entry-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fee {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 0.5rem;
+}
+
+.prize {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.room-options {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.room-toggle-btn {
+  background: #333;
+  color: #FFD700;
+  border: 2px solid #FFD700;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.room-toggle-btn:hover {
+  background: #FFD700;
+  color: #000;
+}
+
+.room-code-section {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.room-input {
+  padding: 1rem;
+  border: 2px solid #333;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 1.1rem;
+  min-width: 200px;
+}
+
+.room-input:focus {
+  outline: none;
+  border-color: #FFD700;
+}
+
+.join-room-btn {
+  background: #FFD700;
+  color: #000;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.join-room-btn:hover {
+  background: #FFC107;
+  transform: translateY(-2px);
+}
