@@ -37,6 +37,7 @@ const ChessGame = ({
   entryFee,
   onGameEnd,
   roomCode = null,
+  userId,
 }) => {
   const [board, setBoard] = useState(initializeBoard());
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -61,12 +62,16 @@ const ChessGame = ({
 
     const handleGameStarted = (data) => {
       console.log("Chess game started:", data);
+      if (!userId) {
+        console.warn(
+          "ChessGame: userId not available when game-started received"
+        );
+        return;
+      }
       setRoomId(data.roomId);
-      setPlayerColor(
-        data.players.white.id === socket.userId ? "white" : "black"
-      );
+      setPlayerColor(data.players.white.id === userId ? "white" : "black");
       setOpponent(
-        data.players.white.id === socket.userId
+        data.players.white.id === userId
           ? data.players.black.name
           : data.players.white.name
       );
@@ -77,6 +82,11 @@ const ChessGame = ({
       setInCheck(false);
       setGameOver(false);
       setWinner(null);
+    };
+
+    const handleWaitingForOpponent = () => {
+      console.log("Chess: Waiting for opponent");
+      setGameStatus("waiting");
     };
 
     const handleMoveMade = (data) => {
@@ -100,7 +110,16 @@ const ChessGame = ({
       setErrorMessage(data.reason);
     };
 
+    const handleQueueCancelled = () => {
+      console.log("Chess: Queue cancelled");
+      setGameStatus("cancelled");
+      // Navigate back or show cancelled message
+      window.location.reload(); // Simple way to go back
+    };
+
     socket.on("game-started", handleGameStarted);
+    socket.on("waiting-for-opponent", handleWaitingForOpponent);
+    socket.on("queue-cancelled", handleQueueCancelled);
     socket.on("move-made", handleMoveMade);
     socket.on("game-over", handleGameOver);
     socket.on("room-join-failed", handleRoomJoinFailed);
@@ -113,6 +132,8 @@ const ChessGame = ({
 
     return () => {
       socket.off("game-started", handleGameStarted);
+      socket.off("waiting-for-opponent", handleWaitingForOpponent);
+      socket.off("queue-cancelled", handleQueueCancelled);
       socket.off("move-made", handleMoveMade);
       socket.off("game-over", handleGameOver);
       socket.off("room-join-failed", handleRoomJoinFailed);
@@ -229,6 +250,12 @@ const ChessGame = ({
           <p>Entry Fee: ₹{entryFee.toLocaleString()}</p>
           <p>Prize Pool: ₹{(entryFee * 2).toLocaleString()}</p>
           <p>Winner Gets: ₹{(entryFee * 2 * 0.8).toLocaleString()}</p>
+          <button
+            className="cancel-queue-btn"
+            onClick={() => propSocket.emit("cancel-queue", "chess")}
+          >
+            Cancel Search
+          </button>
         </div>
       </div>
     );

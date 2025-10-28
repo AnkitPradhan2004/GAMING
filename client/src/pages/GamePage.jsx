@@ -13,7 +13,8 @@ const GamePage = () => {
   const [waitingForPlayer, setWaitingForPlayer] = useState(false);
   const [showRoomCode, setShowRoomCode] = useState(false);
   const [roomCode, setRoomCode] = useState("");
-  const [userBalance] = useState(25000); // Mock balance
+  const [userBalance, setUserBalance] = useState(1000);
+  const [userId, setUserId] = useState(null);
   const [gameMode, setGameMode] = useState("quick"); // "quick" or "room"
   const [createdRoomCode, setCreatedRoomCode] = useState("");
   const [socket, setSocket] = useState(null);
@@ -24,6 +25,29 @@ const GamePage = () => {
   const [gameInvites, setGameInvites] = useState([]);
 
   const entryFees = [100, 500, 1000, 10000, 20000, 50000];
+
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await fetch("http://localhost:3000/users/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.ok) {
+            const userData = await response.json();
+            setUserBalance(userData.walletBalance || 1000);
+            setUserId(userData._id);
+          }
+        } catch (error) {
+          console.error("Failed to fetch user data:", error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     let newSocket;
@@ -79,13 +103,7 @@ const GamePage = () => {
         setWaitingForOpponent(false);
       });
 
-      newSocket.on("game-started", (data) => {
-        console.log("Client: Received game-started", data);
-        // Game has started, render the appropriate game component
-        setGameStarted(true);
-        setWaitingForOpponent(false);
-        setWaitingForPlayer(false);
-      });
+      // Removed game-started listener - game components handle this now
 
       newSocket.on("online-users-update", (data) => {
         setOnlineUsers(data.users);
@@ -152,8 +170,8 @@ const GamePage = () => {
       return;
     }
 
-    // Set waiting state immediately
-    setWaitingForPlayer(true);
+    // Set game started and render game component immediately
+    setGameStarted(true);
 
     if (selectedGame === "chess") {
       console.log(
@@ -166,7 +184,6 @@ const GamePage = () => {
       );
       socket.emit("join-color-queue", selectedEntry);
     }
-    // Don't set gameStarted here - wait for server to confirm match
   };
 
   const handleCreateRoom = () => {
@@ -279,6 +296,19 @@ const GamePage = () => {
   };
 
   if (gameStarted) {
+    // Ensure userId is available before rendering game components
+    if (!userId) {
+      return (
+        <div className="game-page">
+          <div className="waiting-screen">
+            <div className="spinner"></div>
+            <h2>Loading Game...</h2>
+            <p>Please wait while we set up your game.</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <ErrorBoundary gameType={selectedGame}>
         {selectedGame === "chess" ? (
@@ -287,6 +317,7 @@ const GamePage = () => {
             entryFee={selectedEntry}
             onGameEnd={handleGameEnd}
             roomCode={gameMode === "room" ? roomCode : createdRoomCode}
+            userId={userId}
           />
         ) : (
           <ColorPrediction
@@ -294,6 +325,7 @@ const GamePage = () => {
             entryFee={selectedEntry}
             onGameEnd={handleGameEnd}
             roomCode={gameMode === "room" ? roomCode : createdRoomCode}
+            userId={userId}
           />
         )}
       </ErrorBoundary>

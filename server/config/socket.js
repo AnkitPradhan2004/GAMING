@@ -25,23 +25,39 @@ const initializeSocket = (server) => {
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth.token;
+      console.log(`Socket auth: Token present: ${!!token}`);
       if (!token) {
+        socket.userId = `guest_${Date.now()}`;
+        socket.user = { name: "Guest Player" };
+        console.log(
+          `Socket auth: No token, assigned guest ID: ${socket.userId}`
+        );
+        return next();
+      }
+
+      const decoded = verifyToken(token);
+      console.log(
+        `Socket auth: Token decoded successfully for userId: ${decoded.userId}`
+      );
+      const user = await User.findById(decoded.userId);
+
+      if (!user) {
+        console.log(
+          `Socket auth: User not found for userId: ${decoded.userId}`
+        );
         socket.userId = `guest_${Date.now()}`;
         socket.user = { name: "Guest Player" };
         return next();
       }
 
-      const decoded = verifyToken(token);
-      const user = await User.findById(decoded.userId);
-
-      if (!user) {
-        return next(new Error("Authentication error"));
-      }
-
       socket.userId = user._id.toString();
       socket.user = user;
+      console.log(
+        `Socket auth: Authenticated user: ${user.name} (ID: ${socket.userId})`
+      );
       next();
     } catch (err) {
+      console.log(`Socket auth: Token verification failed: ${err.message}`);
       socket.userId = `guest_${Date.now()}`;
       socket.user = { name: "Guest Player" };
       next();
@@ -90,7 +106,12 @@ const initializeSocket = (server) => {
     // Join chess queue
     socket.on("join-chess-queue", (entryFee) => {
       console.log(
-        `Server: User ${socket.user.name} joined chess queue with entry fee ${entryFee}`
+        `Server: User ${socket.user.name} (ID: ${socket.userId}) joined chess queue with entry fee ${entryFee}`
+      );
+      console.log(
+        `Server: User authenticated: ${
+          !!socket.user && socket.user.name !== "Guest Player"
+        }`
       );
 
       // Check if user is already in queue
@@ -120,12 +141,20 @@ const initializeSocket = (server) => {
       });
 
       console.log(`Server: Current waiting players: ${waitingPlayers.size}`);
+      console.log(
+        `Server: Waiting players details:`,
+        Array.from(waitingPlayers.entries()).map(([id, data]) => ({
+          id,
+          name: data.user.name,
+          entryFee: data.entryFee,
+        }))
+      );
 
       // Find matching player
       for (let [playerId, playerData] of waitingPlayers) {
         if (playerId !== socket.userId && playerData.entryFee === entryFee) {
           console.log(
-            `Server: Found match between ${socket.user.name} and ${playerData.user.name}`
+            `Server: Found match between ${socket.user.name} (ID: ${socket.userId}) and ${playerData.user.name} (ID: ${playerId}) with entry fee ${entryFee}`
           );
 
           // Create room
@@ -342,7 +371,12 @@ const initializeSocket = (server) => {
     // Color Prediction Game Events
     socket.on("join-color-queue", (entryFee) => {
       console.log(
-        `Server: User ${socket.user.name} joined color queue with entry fee ${entryFee}`
+        `Server: User ${socket.user.name} (ID: ${socket.userId}) joined color queue with entry fee ${entryFee}`
+      );
+      console.log(
+        `Server: User authenticated: ${
+          !!socket.user && socket.user.name !== "Guest Player"
+        }`
       );
 
       // Check if user is already in queue
@@ -375,6 +409,14 @@ const initializeSocket = (server) => {
       console.log(
         `Server: Current color waiting players: ${colorWaitingPlayers.size}`
       );
+      console.log(
+        `Server: Color waiting players details:`,
+        Array.from(colorWaitingPlayers.entries()).map(([id, data]) => ({
+          id,
+          name: data.user.name,
+          entryFee: data.entryFee,
+        }))
+      );
 
       // Find matching players with same entry fee
       const matchingPlayers = Array.from(colorWaitingPlayers.values()).filter(
@@ -391,7 +433,7 @@ const initializeSocket = (server) => {
 
         console.log(
           `Server: Creating color room ${roomId} for players: ${players
-            .map((p) => p.user.name)
+            .map((p) => `${p.user.name} (ID: ${p.id})`)
             .join(", ")}`
         );
 
@@ -642,34 +684,6 @@ const initializeSocket = (server) => {
           }!`,
         });
       }
-    });
-
-    // Cancel queue search
-    socket.on("cancel-queue", (gameType) => {
-      console.log(
-        `Server: User ${socket.user.name} cancelled ${gameType} queue`
-      );
-
-      if (gameType === "chess") {
-        waitingPlayers.delete(socket.userId);
-      } else if (gameType === "color") {
-        colorWaitingPlayers.delete(socket.userId);
-      }
-
-      // Clear current game
-      const user = onlineUsers.get(socket.userId);
-      if (user) {
-        user.currentGame = null;
-        io.emit("online-users-update", {
-          users: Array.from(onlineUsers.values()).map((user) => ({
-            id: user.id,
-            name: user.name,
-            currentGame: user.currentGame,
-          })),
-        });
-      }
-
-      socket.emit("queue-cancelled", { gameType });
     });
   });
 

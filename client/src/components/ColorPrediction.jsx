@@ -16,6 +16,7 @@ const ColorPrediction = ({
   entryFee,
   onGameEnd,
   roomCode = null,
+  userId,
 }) => {
   const [socket, setSocket] = useState(null);
   const [gameStatus, setGameStatus] = useState("waiting");
@@ -48,11 +49,30 @@ const ColorPrediction = ({
     };
 
     const handleGameStarted = (data) => {
+      console.log("ColorPrediction: Game started event received:", data);
+      if (!userId) {
+        console.warn(
+          "ColorPrediction: userId not available when game-started received"
+        );
+        return;
+      }
       setRoomId(data.roomId);
       setPlayers(data.players);
       setGameStatus("playing");
       setCurrentRound(1);
       setTimeLeft(30);
+    };
+
+    const handleWaitingForPlayers = () => {
+      console.log("ColorPrediction: Waiting for players");
+      setGameStatus("waiting");
+    };
+
+    const handleQueueCancelled = () => {
+      console.log("ColorPrediction: Queue cancelled");
+      setGameStatus("cancelled");
+      // Navigate back or show cancelled message
+      window.location.reload(); // Simple way to go back
     };
 
     const handlePlayersUpdate = (data) => {
@@ -100,6 +120,8 @@ const ColorPrediction = ({
 
     socket.on("room-created", handleRoomCreated);
     socket.on("game-started", handleGameStarted);
+    socket.on("waiting-for-players", handleWaitingForPlayers);
+    socket.on("queue-cancelled", handleQueueCancelled);
     socket.on("players-update", handlePlayersUpdate);
     socket.on("round-started", handleRoundStarted);
     socket.on("timer-update", handleTimerUpdate);
@@ -118,6 +140,8 @@ const ColorPrediction = ({
       // Clean up event listeners
       socket.off("room-created", handleRoomCreated);
       socket.off("game-started", handleGameStarted);
+      socket.off("waiting-for-players", handleWaitingForPlayers);
+      socket.off("queue-cancelled", handleQueueCancelled);
       socket.off("players-update", handlePlayersUpdate);
       socket.off("round-started", handleRoundStarted);
       socket.off("timer-update", handleTimerUpdate);
@@ -173,6 +197,14 @@ const ColorPrediction = ({
             <p>Players in Room: {players.length}/2</p>
           )}
           <p>Waiting for 2 players to start...</p>
+          {!roomCode && (
+            <button
+              className="cancel-queue-btn"
+              onClick={() => propSocket.emit("cancel-queue", "color")}
+            >
+              Cancel Search
+            </button>
+          )}
         </div>
       </div>
     );
@@ -225,13 +257,12 @@ const ColorPrediction = ({
             <div
               key={player.id}
               className={`player-item ${
-                player.id === propSocket?.userId ? "current-player" : ""
+                player.id === userId ? "current-player" : ""
               }`}
             >
               <div className="player-info">
                 <span className="player-name">
-                  {player.name}{" "}
-                  {player.id === propSocket?.userId ? "(You)" : ""}
+                  {player.name} {player.id === userId ? "(You)" : ""}
                 </span>
                 <span className="player-balance">
                   ₹{player.balance?.toLocaleString() || "0"}
