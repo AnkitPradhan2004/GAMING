@@ -152,6 +152,9 @@ const GamePage = () => {
       return;
     }
 
+    // Set waiting state immediately
+    setWaitingForPlayer(true);
+
     if (selectedGame === "chess") {
       console.log(
         `Client: Emitting join-chess-queue with entry fee ${selectedEntry}`

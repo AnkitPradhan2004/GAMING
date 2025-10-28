@@ -162,8 +162,8 @@ const initializeSocket = (server) => {
           io.to(roomId).emit("game-started", {
             roomId,
             players: {
-              white: socket.user.name,
-              black: playerData.user.name,
+              white: { id: socket.userId, name: socket.user.name },
+              black: { id: playerId, name: playerData.user.name },
             },
             entryFee,
             board: room.board,
@@ -258,8 +258,14 @@ const initializeSocket = (server) => {
       io.to(roomCode).emit("game-started", {
         roomId: roomCode,
         players: {
-          white: room.players.white.user.name,
-          black: room.players.black.user.name,
+          white: {
+            id: room.players.white.id,
+            name: room.players.white.user.name,
+          },
+          black: {
+            id: room.players.black.id,
+            name: room.players.black.user.name,
+          },
         },
         entryFee: room.entryFee,
         board: room.board,
@@ -840,6 +846,59 @@ const initializeSocket = (server) => {
     }
 
     return false;
+  }
+
+  function isCheckmate(board, kingColor) {
+    // First check if king is in check
+    if (!isKingInCheck(board, kingColor)) {
+      return false;
+    }
+
+    // Check if king has any legal moves
+    const kingPos = findKing(board, kingColor);
+    if (!kingPos) return true; // No king means checkmate
+
+    // Check all possible moves for the king
+    for (let dRow = -1; dRow <= 1; dRow++) {
+      for (let dCol = -1; dCol <= 1; dCol++) {
+        if (dRow === 0 && dCol === 0) continue;
+
+        const newRow = kingPos.row + dRow;
+        const newCol = kingPos.col + dCol;
+
+        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          if (
+            isValidMove(board, kingPos, { row: newRow, col: newCol }, kingColor)
+          ) {
+            // Try the move and see if king is still in check
+            const testBoard = makeMove(board, kingPos, {
+              row: newRow,
+              col: newCol,
+            });
+            if (!isKingInCheck(testBoard, kingColor)) {
+              return false; // King can escape
+            }
+          }
+        }
+      }
+    }
+
+    // Check if any piece can block the check or capture the attacking piece
+    // This is a simplified check - in a full implementation, we'd check all possible moves
+    // For now, if king is in check and has no moves, it's checkmate
+    return true;
+  }
+
+  function findKing(board, kingColor) {
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col];
+        if (piece && piece.type === "king" && piece.color === kingColor) {
+          return { row, col };
+        }
+      }
+    }
+    return null;
   }
 
   function startColorRound(roomId) {

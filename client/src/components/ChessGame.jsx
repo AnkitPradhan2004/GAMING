@@ -59,91 +59,51 @@ const ChessGame = ({
 
     const socket = propSocket;
 
-    useEffect(() => {
-      if (!propSocket) return;
+    const handleGameStarted = (data) => {
+      console.log("Chess game started:", data);
+      setRoomId(data.roomId);
+      setPlayerColor(
+        data.players.white.id === socket.userId ? "white" : "black"
+      );
+      setOpponent(
+        data.players.white.id === socket.userId
+          ? data.players.black.name
+          : data.players.white.name
+      );
+      setGameStatus("playing");
+      setCurrentPlayer("white");
+      setBoard(initializeBoard());
+      setTimer({ white: 600, black: 600 });
+      setInCheck(false);
+      setGameOver(false);
+      setWinner(null);
+    };
 
-      const socket = propSocket;
-
-      const handleGameStarted = (data) => {
-        console.log("Chess game started:", data);
-        setRoomId(data.roomId);
-        setPlayerColor(
-          data.players.white.id === socket.userId ? "white" : "black"
-        );
-        setOpponent(
-          data.players.white.id === socket.userId
-            ? data.players.black.name
-            : data.players.white.name
-        );
-        setGameStatus("playing");
-        setCurrentPlayer("white");
-        setBoard(initializeBoard());
-        setTimer({ white: 600, black: 600 });
-        setInCheck(false);
-        setGameOver(false);
-        setWinner(null);
-      };
-
-      const handleMoveMade = (data) => {
-        console.log("Received chess move:", data);
-        setBoard(data.board);
-        setCurrentPlayer(data.currentTurn);
-        setInCheck(data.inCheck);
-        setTimer(data.timer);
-      };
-
-      const handleGameOver = (data) => {
-        console.log("Chess game ended:", data);
-        setGameOver(true);
-        setWinner(data.winner);
-        setGameStatus("finished");
-        onGameEnd(data.winner);
-      };
-
-      const handleRoomJoinFailed = (data) => {
-        setGameStatus("error");
-        setErrorMessage(data.reason);
-      };
-
-      socket.on("game-started", handleGameStarted);
-      socket.on("move-made", handleMoveMade);
-      socket.on("game-over", handleGameOver);
-      socket.on("room-join-failed", handleRoomJoinFailed);
-
-      // Join game if roomCode is provided
-      if (roomCode) {
-        socket.emit("join-chess-room", { roomCode, entryFee });
-      }
-      // For quick matches, the GamePage already emitted join-chess-queue
-
-      return () => {
-        socket.off("game-started", handleGameStarted);
-        socket.off("move-made", handleMoveMade);
-        socket.off("game-over", handleGameOver);
-        socket.off("room-join-failed", handleRoomJoinFailed);
-      };
-    }, [propSocket, entryFee, onGameEnd, roomCode]);
-
-    socket.on("move-made", (data) => {
+    const handleMoveMade = (data) => {
       console.log("Received chess move:", data);
       setBoard(data.board);
       setCurrentPlayer(data.currentTurn);
       setInCheck(data.inCheck);
       setTimer(data.timer);
-    });
+    };
 
-    socket.on("game-over", (data) => {
+    const handleGameOver = (data) => {
       console.log("Chess game ended:", data);
       setGameOver(true);
       setWinner(data.winner);
       setGameStatus("finished");
       onGameEnd(data.winner);
-    });
+    };
 
-    socket.on("room-join-failed", (data) => {
+    const handleRoomJoinFailed = (data) => {
       setGameStatus("error");
       setErrorMessage(data.reason);
-    });
+    };
+
+    socket.on("game-started", handleGameStarted);
+    socket.on("move-made", handleMoveMade);
+    socket.on("game-over", handleGameOver);
+    socket.on("room-join-failed", handleRoomJoinFailed);
 
     // Join game if roomCode is provided
     if (roomCode) {
@@ -152,7 +112,10 @@ const ChessGame = ({
     // For quick matches, the GamePage already emitted join-chess-queue
 
     return () => {
-      // Don't disconnect the socket here as it's managed by GamePage
+      socket.off("game-started", handleGameStarted);
+      socket.off("move-made", handleMoveMade);
+      socket.off("game-over", handleGameOver);
+      socket.off("room-join-failed", handleRoomJoinFailed);
     };
   }, [propSocket, entryFee, onGameEnd, roomCode]);
 
