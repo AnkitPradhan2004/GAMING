@@ -298,14 +298,164 @@ npm install -g nodemon
 npm run dev
 ```
 
-## Production Deployment
+## 🚀 Production Deployment
 
-1. Set `NODE_ENV=production` in environment
-2. Use a process manager like PM2
-3. Set up MongoDB Atlas for cloud database
-4. Configure proper CORS origins
-5. Use HTTPS in production
-6. Set up proper logging and monitoring
+### Prerequisites for Production
+
+- **Node.js** (v18 or higher)
+- **MongoDB Atlas** (cloud database)
+- **PM2** (process manager)
+- **Docker** (optional, for containerization)
+- **SSL Certificate** (for HTTPS)
+
+### Environment Setup
+
+1. **Copy environment template**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Update production environment variables**
+   ```env
+   NODE_ENV=production
+   PORT=3000
+   MONGODB_URI=mongodb+srv://your-username:your-password@your-cluster.mongodb.net/your-database
+   JWT_SECRET=your-super-secret-jwt-key-here-minimum-32-chars
+   CLIENT_URL=https://your-frontend-domain.com,https://www.your-frontend-domain.com
+   ```
+
+### Deployment Options
+
+#### Option 1: PM2 Deployment (Recommended)
+
+```bash
+# Install dependencies
+npm install
+
+# Install PM2 globally (if not already installed)
+npm install -g pm2
+
+# Start with PM2
+npm run pm2:start
+
+# Check status
+npm run pm2:monit
+
+# View logs
+npm run pm2:logs
+
+# Restart application
+npm run pm2:restart
+
+# Stop application
+npm run pm2:stop
+```
+
+#### Option 2: Docker Deployment
+
+```bash
+# Build Docker image
+docker build -t aura-gaming-server .
+
+# Run container
+docker run -d \
+  --name aura-server \
+  -p 3000:3000 \
+  --env-file .env \
+  --restart unless-stopped \
+  aura-gaming-server
+
+# Check logs
+docker logs aura-server
+
+# Stop container
+docker stop aura-server
+```
+
+#### Option 3: Cloud Platforms
+
+**Vercel/Netlify (Frontend only)**
+
+- Backend requires persistent connection for Socket.io
+- Use services like Railway, Render, or Heroku
+
+**Railway Deployment**
+
+```bash
+# Connect GitHub repository
+# Railway auto-detects Node.js
+# Set environment variables in dashboard
+# Deploy automatically
+```
+
+**Heroku Deployment**
+
+```bash
+# Create Heroku app
+heroku create your-app-name
+
+# Set environment variables
+heroku config:set NODE_ENV=production
+heroku config:set MONGODB_URI=your-mongodb-uri
+heroku config:set JWT_SECRET=your-jwt-secret
+heroku config:set CLIENT_URL=https://your-frontend.herokuapp.com
+
+# Deploy
+git push heroku main
+```
+
+### Production Checklist
+
+- [ ] Environment variables configured
+- [ ] MongoDB Atlas connection working
+- [ ] CORS origins set to production URLs
+- [ ] HTTPS enabled
+- [ ] PM2/Docker monitoring active
+- [ ] Logs configured and accessible
+- [ ] Health check endpoint responding
+- [ ] Rate limiting active
+- [ ] Security headers enabled
+
+### Monitoring & Maintenance
+
+```bash
+# Check application health
+curl https://your-domain.com/health
+
+# PM2 monitoring
+npm run pm2:monit
+
+# View real-time logs
+npm run pm2:logs
+
+# Restart on changes
+npm run pm2:restart
+
+# Backup strategy
+# - MongoDB Atlas automatic backups
+# - PM2 logs rotation
+# - Environment variable backups
+```
+
+### Security Considerations
+
+- Use strong JWT secrets (minimum 32 characters)
+- Enable HTTPS with SSL certificates
+- Configure proper CORS origins
+- Regularly update dependencies
+- Monitor for security vulnerabilities
+- Use environment variables for sensitive data
+- Implement proper logging without exposing sensitive information
+
+### Performance Optimization
+
+- PM2 clustering for multi-core utilization
+- MongoDB connection pooling
+- Rate limiting to prevent abuse
+- Compression middleware (if needed)
+- CDN for static assets (frontend)
+- Database indexing for query optimization
 
 ## Contributing
 

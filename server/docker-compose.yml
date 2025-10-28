@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aura-gaming-server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=7d
+      - CLIENT_URL=${CLIENT_URL}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - aura-network
+
+  # Optional: MongoDB service (if you want to run MongoDB in Docker)
+  mongodb:
+    image: mongo:6.0
+    container_name: aura-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-password}
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    networks:
+      - aura-network
+    # Uncomment to use local MongoDB instead of Docker
+    # profiles:
+    #   - donotstart
+
+networks:
+  aura-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

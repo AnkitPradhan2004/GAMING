@@ -368,6 +368,45 @@ const initializeSocket = (server) => {
       }
     });
 
+    // Chess resign
+    socket.on("chess-resign", (data) => {
+      const room = chessRooms.get(data.roomId);
+      if (room) {
+        const resigningPlayerColor =
+          room.players.white.id === socket.userId ? "white" : "black";
+        const winnerColor =
+          resigningPlayerColor === "white" ? "black" : "white";
+        const winner = room.players[winnerColor].user.name;
+
+        console.log(
+          `Server: Player ${socket.user.name} resigned from chess game ${data.roomId}. Winner: ${winner}`
+        );
+
+        // Notify both players that game ended due to resignation
+        io.to(data.roomId).emit("game-over", {
+          winner: winner,
+          reason: "resignation",
+          board: room.board,
+        });
+
+        // Clear current game for players
+        const whiteUser = onlineUsers.get(room.players.white.id);
+        const blackUser = onlineUsers.get(room.players.black.id);
+        if (whiteUser) whiteUser.currentGame = null;
+        if (blackUser) blackUser.currentGame = null;
+
+        io.emit("online-users-update", {
+          users: Array.from(onlineUsers.values()).map((user) => ({
+            id: user.id,
+            name: user.name,
+            currentGame: user.currentGame,
+          })),
+        });
+
+        chessRooms.delete(data.roomId);
+      }
+    });
+
     // Color Prediction Game Events
     socket.on("join-color-queue", (entryFee) => {
       console.log(
@@ -668,21 +707,58 @@ const initializeSocket = (server) => {
       console.log(`Server: Emitted bet-placed to room ${data.roomId}`);
     });
 
-    // Invite user to game
-    socket.on("invite-user", (data) => {
-      const { targetUserId, gameType, roomCode } = data;
-      const targetUser = onlineUsers.get(targetUserId);
+    // Cancel queue
+    socket.on("cancel-queue", (gameType) => {
+      console.log(
+        `Server: User ${socket.user.name} (ID: ${socket.userId}) cancelled ${gameType} queue`
+      );
 
-      if (targetUser && targetUser.socket) {
-        targetUser.socket.emit("game-invite", {
-          from: socket.user.name,
-          fromId: socket.userId,
-          gameType,
-          roomCode,
-          message: `${socket.user.name} invited you to play ${
-            gameType === "chess" ? "Chess" : "Color Prediction"
-          }!`,
-        });
+      if (gameType === "chess") {
+        // Remove from chess waiting queue
+        if (waitingPlayers.has(socket.userId)) {
+          waitingPlayers.delete(socket.userId);
+
+          // Update user's current game status
+          const user = onlineUsers.get(socket.userId);
+          if (user) {
+            user.currentGame = null;
+            io.emit("online-users-update", {
+              users: Array.from(onlineUsers.values()).map((user) => ({
+                id: user.id,
+                name: user.name,
+                currentGame: user.currentGame,
+              })),
+            });
+          }
+
+          socket.emit("queue-cancelled");
+          console.log(
+            `Server: User ${socket.user.name} removed from chess queue`
+          );
+        }
+      } else if (gameType === "color") {
+        // Remove from color waiting queue
+        if (colorWaitingPlayers.has(socket.userId)) {
+          colorWaitingPlayers.delete(socket.userId);
+
+          // Update user's current game status
+          const user = onlineUsers.get(socket.userId);
+          if (user) {
+            user.currentGame = null;
+            io.emit("online-users-update", {
+              users: Array.from(onlineUsers.values()).map((user) => ({
+                id: user.id,
+                name: user.name,
+                currentGame: user.currentGame,
+              })),
+            });
+          }
+
+          socket.emit("queue-cancelled");
+          console.log(
+            `Server: User ${socket.user.name} removed from color queue`
+          );
+        }
       }
     });
   });

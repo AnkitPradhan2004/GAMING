@@ -4,9 +4,11 @@ const http = require("http");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const mongoose = require("mongoose");
 const passport = require("./config/passport");
 const connectDB = require("./config/database");
 const initializeSocket = require("./config/socket");
+const logger = require("./utils/logger");
 
 // Import routes
 const authRoutes = require("./routes/auth");
@@ -30,11 +32,9 @@ const io = initializeSocket(server);
 app.use(helmet());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:5175",
-    ],
+    origin: process.env.CLIENT_URL
+      ? process.env.CLIENT_URL.split(",")
+      : ["http://localhost:5173"],
     credentials: true,
   })
 );
@@ -84,7 +84,11 @@ app.get("/", (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error(`Error: ${err.message}`, {
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+  });
   res.status(500).json({ error: "Something went wrong!" });
 });
 
@@ -94,9 +98,49 @@ app.use("*", (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`🚀 AURA 999+ Server running on port ${port}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🔗 Client URL: ${process.env.CLIENT_URL}`);
+  logger.info(`🚀 AURA 999+ Server running on port ${port}`);
+  logger.info(`📊 Environment: ${process.env.NODE_ENV}`);
+  logger.info(`🔗 Client URL: ${process.env.CLIENT_URL}`);
+});
+
+// Graceful shutdown handling
+const gracefulShutdown = (signal) => {
+  logger.info(`Received ${signal}. Starting graceful shutdown...`);
+
+  server.close((err) => {
+    if (err) {
+      logger.error("Error during server shutdown:", err);
+      process.exit(1);
+    }
+
+    logger.info("Server closed successfully.");
+
+    // Close database connection
+    mongoose.connection.close(() => {
+      logger.info("Database connection closed.");
+      process.exit(0);
+    });
+  });
+
+  // Force shutdown after 10 seconds
+  setTimeout(() => {
+    logger.error("Forced shutdown after timeout");
+    process.exit(1);
+  }, 10000);
+};
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  logger.error("Uncaught Exception:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error("Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1);
 });
 
 module.exports = { app, io };

@@ -239,13 +239,12 @@ const GamePage = () => {
     setGameStarted(true);
   };
 
-  const handleCancelQueue = () => {
-    if (!socket || !socket.connected) {
-      alert("Connection not established. Please try again.");
-      return;
-    }
-
-    socket.emit("cancel-queue", selectedGame);
+  const handleQueueCancelled = () => {
+    console.log("GamePage: Queue cancelled");
+    setWaitingForPlayer(false);
+    setWaitingForOpponent(false);
+    setGameStarted(false);
+    setSelectedEntry(null);
   };
 
   const handleGameEnd = (winner) => {
@@ -318,6 +317,7 @@ const GamePage = () => {
             onGameEnd={handleGameEnd}
             roomCode={gameMode === "room" ? roomCode : createdRoomCode}
             userId={userId}
+            onQueueCancelled={handleQueueCancelled}
           />
         ) : (
           <ColorPrediction
@@ -326,6 +326,7 @@ const GamePage = () => {
             onGameEnd={handleGameEnd}
             roomCode={gameMode === "room" ? roomCode : createdRoomCode}
             userId={userId}
+            onQueueCancelled={handleQueueCancelled}
           />
         )}
       </ErrorBoundary>

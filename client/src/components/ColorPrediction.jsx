@@ -17,6 +17,7 @@ const ColorPrediction = ({
   onGameEnd,
   roomCode = null,
   userId,
+  onQueueCancelled,
 }) => {
   const [socket, setSocket] = useState(null);
   const [gameStatus, setGameStatus] = useState("waiting");
@@ -70,9 +71,9 @@ const ColorPrediction = ({
 
     const handleQueueCancelled = () => {
       console.log("ColorPrediction: Queue cancelled");
-      setGameStatus("cancelled");
-      // Navigate back or show cancelled message
-      window.location.reload(); // Simple way to go back
+      if (onQueueCancelled) {
+        onQueueCancelled();
+      }
     };
 
     const handlePlayersUpdate = (data) => {
