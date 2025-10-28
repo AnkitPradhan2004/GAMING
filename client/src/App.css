@@ -41,7 +41,9 @@ html {
 
 .logo {
   height: 40px;
-  width: auto;
+  width: 80px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .nav-links {
@@ -397,7 +399,10 @@ html {
 
 .footer-logo {
   height: 30px;
+  width: 60px;
   margin-bottom: 1rem;
+  object-fit: cover;
+  object-position: center;
 }
 
 .footer-section h4 {

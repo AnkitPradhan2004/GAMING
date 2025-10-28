@@ -5,10 +5,9 @@ A complete full-stack betting web application with real-time chess gaming, authe
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
+
 - **Node.js** (v18 or higher)
 - **MongoDB** (local or cloud)
-- **Google Cloud Console** account (for OAuth)
-- **Twilio** account (for SMS OTP)
 
 ### 1. Backend Setup
 
@@ -45,21 +44,13 @@ npm run dev
 ## 🔧 Required Environment Variables
 
 ### Server (.env file)
+
 ```env
 # REQUIRED - Update these values
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/aura999
 JWT_SECRET=your_super_secret_jwt_key_minimum_32_characters
 JWT_EXPIRE=7d
-
-# Google OAuth - GET FROM: https://console.cloud.google.com/
-GOOGLE_CLIENT_ID=your_google_client_id_from_console
-GOOGLE_CLIENT_SECRET=your_google_client_secret_from_console
-
-# Twilio SMS - GET FROM: https://console.twilio.com/
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=+1234567890
 
 # App Settings
 CLIENT_URL=http://localhost:5173
@@ -71,38 +62,34 @@ NODE_ENV=development
 ### ✅ Required Services Setup
 
 #### 1. MongoDB Setup
+
 - [ ] **Local MongoDB**: Install and start `mongod` service
 - [ ] **OR MongoDB Atlas**: Create cluster at https://cloud.mongodb.com/
 - [ ] Update `MONGODB_URI` in .env file
 
-#### 2. Google OAuth Setup
-- [ ] Go to [Google Cloud Console](https://console.cloud.google.com/)
-- [ ] Create new project or select existing
-- [ ] Enable "Google+ API" or "Google Identity"
-- [ ] Create OAuth 2.0 credentials
-- [ ] Add authorized redirect URI: `http://localhost:3000/auth/google/callback`
-- [ ] Copy Client ID and Secret to .env file
+#### 2. Twilio SMS Setup
 
-#### 3. Twilio SMS Setup
 - [ ] Sign up at [Twilio](https://www.twilio.com/)
 - [ ] Verify your phone number
 - [ ] Get Account SID and Auth Token from dashboard
 - [ ] Purchase a phone number for SMS
 - [ ] Update Twilio credentials in .env file
 
-#### 4. JWT Secret
+#### 3. JWT Secret
+
 - [ ] Generate strong JWT secret (minimum 32 characters)
 - [ ] Use: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
 ### 🎯 Application Features
 
 #### Authentication System
+
 - **Phone OTP Login**: SMS-based verification
-- **Google OAuth**: One-click social login
 - **JWT Tokens**: Secure session management
 - **User Profiles**: Name, phone, wallet balance tracking
 
 #### Chess Gaming Platform
+
 - **Real-time Multiplayer**: Socket.io powered
 - **Entry Fee System**: ₹100 to ₹50,000 betting options
 - **Winner Takes 80%**: 20% platform commission
@@ -110,12 +97,14 @@ NODE_ENV=development
 - **Proper Chess Rules**: Valid move validation
 
 #### Wallet System
+
 - **Deposits**: Add money to wallet
 - **Withdrawals**: Cash out winnings
 - **Transaction History**: Complete audit trail
 - **Balance Validation**: Prevent insufficient fund bets
 
 #### Customer Support
+
 - **Live Chat Widget**: Real-time support
 - **Quick Issues**: Pre-defined problem categories
 - **Contact Fallback**: Phone number for complex issues
@@ -130,7 +119,7 @@ NODE_ENV=development
 
 ### 🎮 How to Play
 
-1. **Register/Login**: Use phone OTP or Google OAuth
+1. **Register/Login**: Create account with email and password
 2. **Add Funds**: Deposit money to wallet (mock system)
 3. **Start Playing**: Click "Start Playing" button
 4. **Select Entry Fee**: Choose from ₹100 to ₹50,000
@@ -143,40 +132,42 @@ NODE_ENV=development
 #### Common Issues:
 
 1. **MongoDB Connection Error**
+
    - Ensure MongoDB is running: `mongod`
    - Check connection string in .env
 
-2. **Google OAuth Not Working**
-   - Verify redirect URI in Google Console
-   - Check Client ID and Secret
+2. **SMS OTP Not Sending**
 
-3. **SMS OTP Not Sending**
    - Verify Twilio credentials
    - Check phone number format (+country code)
    - Ensure Twilio account has credits
 
-4. **Socket.io Connection Issues**
+3. **Socket.io Connection Issues**
+
    - Check if both frontend and backend are running
    - Verify CORS settings
 
-5. **JWT Token Errors**
+4. **JWT Token Errors**
    - Ensure JWT_SECRET is set and long enough
    - Check token expiration settings
 
 ### 📱 Mobile Responsive
+
 - All pages work on mobile devices
 - Touch-friendly chess interface
 - Responsive navigation and forms
 
 ### 🔒 Security Features
+
 - Rate limiting (100 requests/15 minutes)
 - CORS protection
 - Helmet security headers
 - Input validation and sanitization
 - JWT-based authentication
-- Phone number verification
+- Password hashing with bcrypt
 
 ### 🎨 Design Theme
+
 - **Colors**: Black (#000), Yellow (#FFD700), White (#FFF)
 - **3D Effects**: Hover animations and depth
 - **Modern UI**: Glass morphism and gradients
@@ -189,13 +180,13 @@ GAMING/
 ├── server/                 # Backend (Node.js + Express)
 │   ├── config/
 │   │   ├── database.js     # MongoDB connection
-│   │   ├── passport.js     # Google OAuth config
+│   │   ├── passport.js     # Authentication config
 │   │   └── socket.js       # Real-time chess logic
 │   ├── controllers/        # Business logic
 │   ├── models/            # Database schemas
 │   ├── routes/            # API endpoints
 │   ├── middleware/        # Auth & validation
-│   ├── utils/             # JWT & Twilio services
+│   ├── utils/             # JWT services
 │   ├── scripts/           # Admin user creation
 │   ├── .env              # Environment variables
 │   └── server.js         # Main server file
@@ -217,29 +208,34 @@ GAMING/
 ## API Endpoints
 
 ### Authentication
-- `GET /auth/google` - Google OAuth login
+
 - `POST /auth/phone/send-otp` - Send OTP to phone
 - `POST /auth/phone/verify-otp` - Verify OTP and login
 
 ### User Management
+
 - `GET /users/me` - Get current user profile
 - `PUT /users/profile` - Update user profile
 - `GET /users/transactions` - Get user transaction history
 
 ### Wallet Operations
+
 - `POST /wallet/deposit` - Add money to wallet
 - `POST /wallet/withdraw` - Withdraw money from wallet
 
 ### Gaming
+
 - `GET /games` - List all active games
 - `POST /games/join/:id` - Join a game
 - `POST /games/create` - Create new game (admin)
 
 ### Betting
+
 - `POST /bets/place` - Place a bet on active game
 - `GET /bets/my-bets` - Get user's betting history
 
 ### Admin (Admin Only)
+
 - `GET /admin/users` - Get all users
 - `GET /admin/games` - Get all games
 - `GET /admin/stats` - Get platform statistics
@@ -248,32 +244,19 @@ GAMING/
 ## Socket.io Events
 
 ### Client Events
+
 - `join-game` - Join a game room
 - `leave-game` - Leave a game room
 - `game-action` - Send game action
 - `start-game` - Start a game
 
 ### Server Events
+
 - `game-joined` - Confirmation of joining game
 - `player-joined` - New player joined notification
 - `player-left` - Player left notification
 - `game-update` - Real-time game state updates
 - `game-started` - Game started notification
-
-## Setup External Services
-
-### Google OAuth Setup
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URI: `http://localhost:3000/auth/google/callback`
-
-### Twilio Setup
-1. Sign up at [Twilio](https://www.twilio.com/)
-2. Get Account SID and Auth Token from dashboard
-3. Purchase a phone number for SMS
-4. Update environment variables
 
 ## Security Features
 
@@ -288,23 +271,22 @@ GAMING/
 ## Database Models
 
 ### User
+
 - Personal information (name, email, phone)
 - Wallet balance and gaming statistics
-- Authentication data (Google ID, phone verification)
+- Authentication data (phone verification)
 
 ### Game
+
 - Game metadata and settings
 - Player list with bet amounts
 - Game status and winner tracking
 
 ### Transaction
+
 - Complete financial audit trail
 - Deposit, withdrawal, bet, win/loss records
 - Game association for betting transactions
-
-### OTP
-- Temporary OTP storage for phone verification
-- Auto-expiration after 5 minutes
 
 ## Development
 

@@ -12,7 +12,7 @@
 
 .game-header h1 {
   font-size: 3rem;
-  color: #FFD700;
+  color: #ffd700;
   margin-bottom: 1rem;
 }
 
@@ -22,7 +22,29 @@
   padding: 1rem 2rem;
   border-radius: 10px;
   display: inline-block;
-  border: 2px solid #FFD700;
+  border: 2px solid #ffd700;
+}
+
+.connection-status {
+  margin-top: 1rem;
+}
+
+.connecting {
+  color: #ffd700;
+  font-size: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .waiting-screen {
@@ -34,19 +56,23 @@
   width: 60px;
   height: 60px;
   border: 4px solid #333;
-  border-top: 4px solid #FFD700;
+  border-top: 4px solid #ffd700;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 2rem;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .waiting-screen h2 {
-  color: #FFD700;
+  color: #ffd700;
   margin-bottom: 1rem;
 }
 
@@ -63,7 +89,7 @@
 
 .entry-selection h2 {
   font-size: 2.5rem;
-  color: #FFD700;
+  color: #ffd700;
   margin-bottom: 3rem;
 }
 
@@ -84,7 +110,7 @@
 }
 
 .entry-btn:hover:not(.disabled) {
-  border-color: #FFD700;
+  border-color: #ffd700;
   transform: translateY(-5px) rotateX(10deg);
   box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
 }
@@ -97,7 +123,7 @@
 .fee {
   font-size: 2rem;
   font-weight: bold;
-  color: #FFD700;
+  color: #ffd700;
   margin-bottom: 0.5rem;
 }
 
@@ -111,29 +137,63 @@
   text-align: center;
 }
 
-.room-toggle-btn {
+.game-mode-selector {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.mode-btn {
   background: #333;
-  color: #FFD700;
-  border: 2px solid #FFD700;
+  color: #ccc;
+  border: 2px solid #333;
   padding: 1rem 2rem;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.1rem;
-  margin-bottom: 1rem;
   transition: all 0.3s ease;
 }
 
-.room-toggle-btn:hover {
-  background: #FFD700;
+.mode-btn.active {
+  background: #ffd700;
   color: #000;
+  border-color: #ffd700;
 }
 
-.room-code-section {
+.mode-btn:hover {
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.room-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.create-room-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.create-room-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.room-join-section {
   display: flex;
   gap: 1rem;
-  justify-content: center;
   align-items: center;
-  margin-top: 1rem;
 }
 
 .room-input {
@@ -148,11 +208,11 @@
 
 .room-input:focus {
   outline: none;
-  border-color: #FFD700;
+  border-color: #ffd700;
 }
 
 .join-room-btn {
-  background: #FFD700;
+  background: #ffd700;
   color: #000;
   border: none;
   padding: 1rem 2rem;
@@ -164,6 +224,241 @@
 }
 
 .join-room-btn:hover {
-  background: #FFC107;
+  background: #ffc107;
   transform: translateY(-2px);
+}
+
+.created-room-info {
+  background: #1a1a1a;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.created-room-info p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.created-room-info strong {
+  color: #ffd700;
+  font-size: 1.3rem;
+}
+
+.quick-match-btn {
+  background: #ffd700;
+  color: #000;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.quick-match-btn:hover:not(:disabled) {
+  background: #ffc107;
+  transform: translateY(-2px);
+}
+
+.quick-match-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.select-fee-prompt {
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-top: 2rem;
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+.select-fee-prompt p {
+  margin: 0;
+  font-style: italic;
+}
+
+.game-selector {
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+
+.game-selector h2 {
+  font-size: 2.5rem;
+  color: #ffd700;
+  margin-bottom: 3rem;
+}
+
+.game-options {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.game-option {
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  border: 2px solid #333;
+  border-radius: 15px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  transform-style: preserve-3d;
+}
+
+.game-option:hover {
+  border-color: #ffd700;
+  transform: translateY(-5px);
+}
+
+.game-option.active {
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.game-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.game-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+}
+
+.game-desc {
+  color: #ccc;
+  font-size: 1rem;
+}
+
+.game-option-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.online-count {
+  font-size: 0.9rem;
+  color: #ffd700;
+  margin-top: 0.5rem;
+}
+
+.online-users-list {
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.online-users-list h4 {
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.online-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.online-user:last-child {
+  border-bottom: none;
+}
+
+.invite-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.invite-btn:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.invite-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.game-invites {
+  margin-top: 2rem;
+  background: #1a1a1a;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.game-invites h3 {
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.invite-item {
+  background: #0f0f0f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.invite-item p {
+  margin: 0 0 0.5rem 0;
+  color: #ccc;
+}
+
+.invite-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.accept-invite-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.accept-invite-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.decline-invite-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.decline-invite-btn:hover {
+  background: #c82333;
+  transform: translateY(-1px);
 }

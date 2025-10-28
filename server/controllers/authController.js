@@ -1,66 +1,88 @@
-const User = require('../models/User');
-const OTP = require('../models/OTP');
-const { generateToken } = require('../utils/jwt');
-const { sendOTP } = require('../utils/twilio');
+const User = require("../models/User");
+const { generateToken } = require("../utils/jwt");
 
-const googleAuth = async (req, res) => {
+const register = async (req, res) => {
   try {
-    const token = generateToken(req.user._id);
-    res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
-  } catch (error) {
-    res.status(500).json({ error: 'Authentication failed' });
-  }
-};
+    const { name, email, password } = req.body;
 
-const sendPhoneOTP = async (req, res) => {
-  try {
-    const { phone } = req.body;
-    
-    if (!phone) {
-      return res.status(400).json({ error: 'Phone number is required' });
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Name, email, and password are required" });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    await OTP.deleteMany({ phone });
-    await OTP.create({ phone, otp });
-    
-    const sent = await sendOTP(phone, otp);
-    
-    if (!sent) {
-      return res.status(500).json({ error: 'Failed to send OTP' });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ error: "User with this email already exists" });
     }
 
-    res.json({ message: 'OTP sent successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to send OTP' });
-  }
-};
+    // Create new user
+    const user = await User.create({ name, email, password });
 
-const verifyPhoneOTP = async (req, res) => {
-  try {
-    const { phone, otp, name } = req.body;
-    
-    const otpRecord = await OTP.findOne({ phone, otp });
-    
-    if (!otpRecord) {
-      return res.status(400).json({ error: 'Invalid or expired OTP' });
-    }
-
-    let user = await User.findOne({ phone });
-    
-    if (!user) {
-      user = await User.create({ phone, name: name || 'User' });
-    }
-
-    await OTP.deleteOne({ _id: otpRecord._id });
-    
+    // Generate token
     const token = generateToken(user._id);
-    
-    res.json({ token, user });
+
+    res.status(201).json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        walletBalance: user.walletBalance,
+        role: user.role,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Authentication failed' });
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Registration failed" });
   }
 };
 
-module.exports = { googleAuth, sendPhoneOTP, verifyPhoneOTP };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Check password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      return res.status(401).json({ error: "Account is deactivated" });
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        walletBalance: user.walletBalance,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Login failed" });
+  }
+};
+
+module.exports = { register, login };

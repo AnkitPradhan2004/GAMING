@@ -16,7 +16,7 @@
 }
 
 .prize-pool h3 {
-  color: #FFD700;
+  color: #ffd700;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
@@ -24,6 +24,38 @@
 .prize-pool p {
   color: #ccc;
   font-size: 1.1rem;
+}
+
+.check-warning {
+  color: #ff6b6b !important;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+.game-result {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.game-result.win {
+  color: #4caf50;
+}
+
+.game-result.lose {
+  color: #f44336;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .timers {
@@ -41,7 +73,7 @@
 }
 
 .timer.active {
-  background: #FFD700;
+  background: #ffd700;
   color: #000;
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }
@@ -53,7 +85,7 @@
   width: 600px;
   height: 600px;
   margin: 0 auto 2rem;
-  border: 4px solid #FFD700;
+  border: 4px solid #ffd700;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -76,12 +108,29 @@
 }
 
 .square:hover {
-  box-shadow: inset 0 0 0 3px #FFD700;
+  box-shadow: inset 0 0 0 3px #ffd700;
 }
 
 .square.selected {
   box-shadow: inset 0 0 0 4px #ff4444;
   background: rgba(255, 215, 0, 0.3);
+}
+
+.square.in-check {
+  box-shadow: inset 0 0 0 4px #ff0000, 0 0 20px rgba(255, 0, 0, 0.5);
+  animation: check-pulse 1s infinite;
+}
+
+@keyframes check-pulse {
+  0% {
+    box-shadow: inset 0 0 0 4px #ff0000, 0 0 20px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: inset 0 0 0 6px #ff0000, 0 0 30px rgba(255, 0, 0, 0.8);
+  }
+  100% {
+    box-shadow: inset 0 0 0 4px #ff0000, 0 0 20px rgba(255, 0, 0, 0.5);
+  }
 }
 
 .piece {
@@ -106,7 +155,7 @@
 }
 
 .current-turn .white {
-  color: #FFD700;
+  color: #ffd700;
 }
 
 .current-turn .black {
@@ -135,18 +184,52 @@
     width: 400px;
     height: 400px;
   }
-  
+
   .piece {
     font-size: 2rem;
   }
-  
+
   .game-info {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .timers {
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.error-actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.error-actions .retry-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.error-actions .retry-btn:hover {
+  background-color: #0056b3;
+}
+
+.error-actions .back-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.error-actions .back-btn:hover {
+  background-color: #545b62;
 }

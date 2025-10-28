@@ -1,0 +1,343 @@
+.color-prediction {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: "Arial", sans-serif;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px solid #333;
+}
+
+.round-info h3 {
+  color: #ffd700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.timer {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.timer .urgent {
+  color: #ff4444;
+  animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.players-list {
+  flex: 1;
+  margin-left: 2rem;
+}
+
+.player-item.current-player {
+  border-left: 3px solid #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.player-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.player-bet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.potential-win {
+  font-size: 0.8rem;
+  color: #88ff88;
+  font-weight: bold;
+}
+
+.betting-status {
+  font-size: 0.9rem;
+  color: #ffa500;
+  font-style: italic;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: #333;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+}
+
+.player-name {
+  color: #fff;
+  font-weight: bold;
+}
+
+.player-balance {
+  color: #4caf50;
+}
+
+.player-bet {
+  color: #000;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.color-wheel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.color-button {
+  width: 150px;
+  height: 150px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.color-button:hover:not(.disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.color-button.selected {
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.color-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.color-name {
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.multiplier {
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+}
+
+.result-display {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.winning-color {
+  padding: 2rem;
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+  font-weight: bold;
+  animation: spin 2s ease-out;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.winners-list {
+  margin-top: 1rem;
+}
+
+.winner-item {
+  background: #4caf50;
+  color: #000;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px solid #333;
+}
+
+.bet-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bet-controls label {
+  color: #fff;
+  font-weight: bold;
+}
+
+.bet-controls input {
+  padding: 0.5rem;
+  border: 2px solid #555;
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
+  width: 100px;
+}
+
+.game-history {
+  text-align: right;
+}
+
+.game-history h4 {
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.history-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.history-item {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.waiting-screen,
+.error-screen {
+  text-align: center;
+  padding: 3rem;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 2px solid #333;
+}
+
+.waiting-screen h2,
+.error-screen h2 {
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.waiting-screen p {
+  color: #ccc;
+  margin-bottom: 0.5rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #333;
+  border-top: 4px solid #ffd700;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 2rem;
+}
+
+.error-screen button {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.error-screen button:hover {
+  background: #cc3333;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .game-info {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .players-list {
+    margin-left: 0;
+  }
+
+  .color-wheel {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .color-button {
+    width: 120px;
+    height: 120px;
+  }
+
+  .game-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .history-list {
+    justify-content: center;
+  }
+}

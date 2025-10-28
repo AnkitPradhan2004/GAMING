@@ -1,12 +1,15 @@
 # AURA 999+ Betting Platform API Documentation
 
 ## Base URL
+
 ```
 http://localhost:3000
 ```
 
 ## Authentication
+
 All protected routes require a JWT token in the Authorization header:
+
 ```
 Authorization: Bearer <token>
 ```
@@ -15,49 +18,42 @@ Authorization: Bearer <token>
 
 ### Authentication Routes
 
-#### Google OAuth Login
-```
-GET /auth/google
-```
-Redirects to Google OAuth consent screen.
+#### Register User
 
-#### Google OAuth Callback
 ```
-GET /auth/google/callback
-```
-Handles Google OAuth callback and redirects with token.
-
-#### Send Phone OTP
-```
-POST /auth/phone/send-otp
+POST /auth/register
 Content-Type: application/json
 
 {
-  "phone": "+1234567890"
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securepassword123"
 }
 ```
 
-#### Verify Phone OTP
+#### Login User
+
 ```
-POST /auth/phone/verify-otp
+POST /auth/login
 Content-Type: application/json
 
 {
-  "phone": "+1234567890",
-  "otp": "123456",
-  "name": "User Name" (optional)
+  "email": "john@example.com",
+  "password": "securepassword123"
 }
 ```
 
 ### User Routes
 
 #### Get Current User
+
 ```
 GET /users/me
 Authorization: Bearer <token>
 ```
 
 #### Update Profile
+
 ```
 PUT /users/profile
 Authorization: Bearer <token>
@@ -70,6 +66,7 @@ Content-Type: application/json
 ```
 
 #### Get User Transactions
+
 ```
 GET /users/transactions
 Authorization: Bearer <token>
@@ -78,6 +75,7 @@ Authorization: Bearer <token>
 ### Wallet Routes
 
 #### Deposit Money
+
 ```
 POST /wallet/deposit
 Authorization: Bearer <token>
@@ -89,6 +87,7 @@ Content-Type: application/json
 ```
 
 #### Withdraw Money
+
 ```
 POST /wallet/withdraw
 Authorization: Bearer <token>
@@ -102,12 +101,14 @@ Content-Type: application/json
 ### Game Routes
 
 #### Get All Games
+
 ```
 GET /games
 Authorization: Bearer <token>
 ```
 
 #### Join Game
+
 ```
 POST /games/join/:id
 Authorization: Bearer <token>
@@ -119,6 +120,7 @@ Content-Type: application/json
 ```
 
 #### Create Game (Admin Only)
+
 ```
 POST /games/create
 Authorization: Bearer <token>
@@ -134,6 +136,7 @@ Content-Type: application/json
 ### Bet Routes
 
 #### Place Bet
+
 ```
 POST /bets/place
 Authorization: Bearer <token>
@@ -146,6 +149,7 @@ Content-Type: application/json
 ```
 
 #### Get User Bets
+
 ```
 GET /bets/my-bets
 Authorization: Bearer <token>
@@ -154,24 +158,28 @@ Authorization: Bearer <token>
 ### Admin Routes (Admin Only)
 
 #### Get All Users
+
 ```
 GET /admin/users
 Authorization: Bearer <token>
 ```
 
 #### Get All Games
+
 ```
 GET /admin/games
 Authorization: Bearer <token>
 ```
 
 #### Get Platform Statistics
+
 ```
 GET /admin/stats
 Authorization: Bearer <token>
 ```
 
 #### End Game
+
 ```
 POST /admin/end-game
 Authorization: Bearer <token>
@@ -188,69 +196,81 @@ Content-Type: application/json
 ### Client to Server Events
 
 #### Join Game Room
+
 ```javascript
-socket.emit('join-game', gameId);
+socket.emit("join-game", gameId);
 ```
 
 #### Leave Game Room
+
 ```javascript
-socket.emit('leave-game', gameId);
+socket.emit("leave-game", gameId);
 ```
 
 #### Game Action
+
 ```javascript
-socket.emit('game-action', {
-  gameId: 'game_id',
-  action: 'action_type',
-  payload: { /* action data */ }
+socket.emit("game-action", {
+  gameId: "game_id",
+  action: "action_type",
+  payload: {
+    /* action data */
+  },
 });
 ```
 
 #### Start Game
+
 ```javascript
-socket.emit('start-game', gameId);
+socket.emit("start-game", gameId);
 ```
 
 ### Server to Client Events
 
 #### Game Joined
+
 ```javascript
-socket.on('game-joined', (game) => {
+socket.on("game-joined", (game) => {
   // Handle game joined
 });
 ```
 
 #### Player Joined
+
 ```javascript
-socket.on('player-joined', (player) => {
+socket.on("player-joined", (player) => {
   // Handle new player joined
 });
 ```
 
 #### Player Left
+
 ```javascript
-socket.on('player-left', (player) => {
+socket.on("player-left", (player) => {
   // Handle player left
 });
 ```
 
 #### Game Update
+
 ```javascript
-socket.on('game-update', (update) => {
+socket.on("game-update", (update) => {
   // Handle game state update
 });
 ```
 
 #### Game Started
+
 ```javascript
-socket.on('game-started', (game) => {
+socket.on("game-started", (game) => {
   // Handle game started
 });
 ```
 
 #### Error
+
 ```javascript
-socket.on('error', (message) => {
+socket.on("error", (message) => {
   // Handle error
 });
 ```
@@ -258,6 +278,7 @@ socket.on('error', (message) => {
 ## Error Responses
 
 All error responses follow this format:
+
 ```json
 {
   "error": "Error message description"
@@ -265,6 +286,7 @@ All error responses follow this format:
 ```
 
 Common HTTP status codes:
+
 - 200: Success
 - 201: Created
 - 400: Bad Request
