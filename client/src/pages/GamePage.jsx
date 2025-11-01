@@ -32,7 +32,7 @@ const GamePage = () => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await fetch("http://localhost:3000/users/me", {
+          const response = await fetch("https://gaming-102m.onrender.com/users/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (response.ok) {
@@ -57,7 +57,7 @@ const GamePage = () => {
       const token = localStorage.getItem("token");
 
       // Connect with authentication
-      newSocket = io("http://localhost:3000", {
+      newSocket = io("https://gaming-102m.onrender.com", {
         auth: {
           token: token,
         },
