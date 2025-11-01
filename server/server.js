@@ -31,14 +31,40 @@ const io = initializeSocket(server);
 
 // Security middleware
 app.use(helmet());
+
+// CORS Configuration - Allow Vercel frontend and localhost
+const allowedOrigins = [
+  "https://gaming-app-3.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+];
+
+if (process.env.CLIENT_URL) {
+  const envOrigins = process.env.CLIENT_URL.split(",").map((url) => url.trim());
+  allowedOrigins.push(...envOrigins);
+}
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL
-      ? process.env.CLIENT_URL.split(",")
-      : ["http://localhost:5173"],
+    origin: allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Additional CORS headers for preflight requests
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.get("origin") || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // Rate limiting
 const limiter = rateLimit({

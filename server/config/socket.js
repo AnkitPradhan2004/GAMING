@@ -13,11 +13,13 @@ const initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
       origin: [
+        "https://gaming-app-3.vercel.app",
         "http://localhost:5173",
         "http://localhost:5174",
         "http://localhost:5175",
       ],
       methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
