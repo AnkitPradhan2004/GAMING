@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/users/me", {
+        const response = await fetch("https://gaming-102m.onrender.com/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setIsAuthenticated(response.ok);

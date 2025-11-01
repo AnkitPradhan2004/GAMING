@@ -239,6 +239,14 @@ const GamePage = () => {
     setGameStarted(true);
   };
 
+  const handleCancelQueue = () => {
+    if (socket && socket.connected) {
+      socket.emit(selectedGame === "chess" ? "cancel-chess-queue" : "cancel-color-queue");
+    }
+    setWaitingForPlayer(false);
+    setWaitingForOpponent(false);
+  };
+
   const handleQueueCancelled = () => {
     console.log("GamePage: Queue cancelled");
     setWaitingForPlayer(false);
