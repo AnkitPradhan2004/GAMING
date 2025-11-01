@@ -9,6 +9,7 @@ const passport = require("./config/passport");
 const connectDB = require("./config/database");
 const initializeSocket = require("./config/socket");
 const logger = require("./utils/logger");
+const path = require("path");
 
 // Import routes
 const authRoutes = require("./routes/auth");
@@ -53,6 +54,9 @@ app.use(express.urlencoded({ extended: true }));
 // Passport middleware
 app.use(passport.initialize());
 
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
 // Routes
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -92,9 +96,9 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Something went wrong!" });
 });
 
-// 404 handler
-app.use("*", (req, res) => {
-  res.status(404).json({ error: "Route not found" });
+// Serve React app for all other routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 server.listen(port, () => {
