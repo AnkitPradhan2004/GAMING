@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/logo.jpg";
+import { API_BASE_URL } from "../config/api";
 import "./AuthPage.css";
 
 const SignupPage = () => {
@@ -18,7 +19,7 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://gaming-102m.onrender.com/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

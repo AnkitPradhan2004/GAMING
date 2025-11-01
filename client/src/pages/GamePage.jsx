@@ -4,6 +4,7 @@ import ChessGame from "../components/ChessGame";
 import ColorPrediction from "../components/ColorPrediction";
 import ErrorBoundary from "../components/ErrorBoundary";
 import io from "socket.io-client";
+import { API_BASE_URL, SOCKET_URL } from "../config/api";
 import "./GamePage.css";
 
 const GamePage = () => {
@@ -32,7 +33,7 @@ const GamePage = () => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await fetch("https://gaming-102m.onrender.com/users/me", {
+          const response = await fetch(`${API_BASE_URL}/users/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (response.ok) {
@@ -57,7 +58,7 @@ const GamePage = () => {
       const token = localStorage.getItem("token");
 
       // Connect with authentication
-      newSocket = io("https://gaming-102m.onrender.com", {
+      newSocket = io(SOCKET_URL, {
         auth: {
           token: token,
         },
@@ -241,7 +242,9 @@ const GamePage = () => {
 
   const handleCancelQueue = () => {
     if (socket && socket.connected) {
-      socket.emit(selectedGame === "chess" ? "cancel-chess-queue" : "cancel-color-queue");
+      socket.emit(
+        selectedGame === "chess" ? "cancel-chess-queue" : "cancel-color-queue"
+      );
     }
     setWaitingForPlayer(false);
     setWaitingForOpponent(false);

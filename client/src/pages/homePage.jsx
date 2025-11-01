@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
 import CustomerChat from "../components/CustomerChat";
+import { API_BASE_URL } from "../config/api";
 import "../App.css";
 
 function HomePage() {
@@ -19,7 +20,7 @@ function HomePage() {
 
   const fetchUserData = async (token) => {
     try {
-      const response = await fetch("https://gaming-102m.onrender.com/users/me", {
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { API_BASE_URL } from "../config/api";
 
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -16,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
       }
 
       try {
-        const response = await fetch("https://gaming-102m.onrender.com/users/me", {
+        const response = await fetch(`${API_BASE_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setIsAuthenticated(response.ok);
